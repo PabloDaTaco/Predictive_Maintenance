@@ -1,12 +1,13 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
-
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
 # Load the dataset
@@ -130,3 +131,44 @@ lr_pred = lr_model.predict(X_test)
 print("\nLOGISTIC REGRESSION RESULTS")
 print(classification_report(y_test, lr_pred, zero_division=0))
 print(confusion_matrix(y_test, lr_pred))
+
+#Plot graphs of Decision Tree and confusion matrix
+#Decision tree output is a little rough will fix
+plt.figure(figsize=(20, 10))
+
+plot_tree(
+    dt_model,
+    feature_names=X.columns,
+    class_names=["No Failure", "Failure"],
+    filled=True,
+    rounded=True,
+    fontsize=9
+)
+
+plt.title("Machine Failure Decision Tree")
+plt.tight_layout()
+plt.show()
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+models = [
+    ("Decision Tree", dt_pred),
+    ("Random Forest", rf_pred),
+    ("Logistic Regression", lr_pred)
+]
+
+for ax, (name, prediction) in zip(axes, models):
+
+    ConfusionMatrixDisplay.from_predictions(
+        y_test,
+        prediction,
+        display_labels=["No Failure", "Failure"],
+        cmap="Blues",
+        ax=ax,
+        colorbar=False
+    )
+    ax.set_title(name)
+
+
+plt.tight_layout()
+plt.show()
