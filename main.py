@@ -9,6 +9,9 @@ from sklearn.pipeline import make_pipeline
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 # Load the dataset
 data = pd.read_csv("ai4i2020.csv")
@@ -169,6 +172,66 @@ for ax, (name, prediction) in zip(axes, models):
     )
     ax.set_title(name)
 
+
+plt.tight_layout()
+plt.show()
+
+# Select numerical features for correlation analysis
+eda_features = [
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Rotational speed [rpm]",
+    "Torque [Nm]",
+    "Tool wear [min]",
+    "Machine failure"
+]
+
+# Calculate correlations
+correlation = data[eda_features].corr()
+
+# Generate heatmap
+plt.figure(figsize=(10, 7))
+
+sns.heatmap(
+    correlation,
+    annot=True,
+    cmap="coolwarm",
+    fmt=".2f",
+    linewidths=0.5,
+    vmin=-1,
+    vmax=1
+)
+
+plt.title("Correlation Between Machine Operating Features")
+plt.tight_layout()
+
+
+plt.show()
+
+
+# Create scatter plot
+plt.figure(figsize=(10, 7))
+
+sns.scatterplot(
+    data=data,
+    x="Rotational speed [rpm]",
+    y="Torque [Nm]",
+    hue="Machine failure",
+    palette={0: "steelblue", 1: "red"},
+    alpha=0.5
+)
+
+plt.title("Rotational Speed vs. Torque by Machine Failure")
+plt.xlabel("Rotational Speed (rpm)")
+plt.ylabel("Torque (Nm)")
+
+# Label the classes
+handles, labels = plt.gca().get_legend_handles_labels()
+plt.legend(
+    handles,
+    ["No Failure", "Failure"],
+    title="Machine Status"
+)
 
 plt.tight_layout()
 plt.show()
