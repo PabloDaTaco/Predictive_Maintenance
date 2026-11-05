@@ -7,11 +7,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.tree import export_graphviz
 import matplotlib.pyplot as plt
 
 import seaborn as sns
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import graphviz
 
 # Load the dataset
 data = pd.read_csv("ai4i2020.csv")
@@ -139,18 +141,19 @@ print(confusion_matrix(y_test, lr_pred))
 #Decision tree output is a little rough will fix
 plt.figure(figsize=(20, 10))
 
-plot_tree(
+dot_data = export_graphviz(
     dt_model,
+    out_file=None,
     feature_names=X.columns,
     class_names=["No Failure", "Failure"],
     filled=True,
     rounded=True,
-    fontsize=9
 )
 
-plt.title("Machine Failure Decision Tree")
-plt.tight_layout()
-plt.show()
+graph = graphviz.Source(dot_data)
+
+graph.render("Decision_Tree", format="png", cleanup=True)
+graph.view()
 
 fig, axes = plt.subplots(1, 3, figsize=(16, 5))
 
